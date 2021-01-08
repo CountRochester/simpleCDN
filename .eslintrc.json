@@ -1,0 +1,38 @@
+{
+  "root": true,
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "parserOptions": {
+    "parser": "babel-eslint"
+  },
+  "extends": [
+    "airbnb-base"
+  ],
+  "plugins": [
+    
+  ],
+  "rules": {
+    "semi": "off",
+    "linebreak-style": "off",
+    "comma-dangle": "off",
+    "no-confusing-arrow": "off",
+    "arrow-parens": "off",
+    "space-before-function-paren": ["error", "always"],
+    "max-statements": [2, 16],
+    "max-depth": [2, 5],
+    "complexity": [2, 7],
+    "max-len": [2, 85],
+    "max-params": [2, 3],
+    "max-nested-callbacks": [2, 1],
+    "consistent-this": "error",
+    "no-extra-bind": "error",
+    "import/extensions": "off",
+    "no-plusplus": "off",
+    "no-underscore-dangle": "warn",
+    "no-param-reassign": "warn",
+    "import/no-extraneous-dependencies": "off",
+    "no-bitwise": "off"
+  }
+}

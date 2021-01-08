@@ -1,0 +1,36 @@
+{
+  "name": "simplecdn",
+  "version": "1.0.0",
+  "description": "Simple CDN service",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development nodemon src/index.js --watch server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CountRochester/simpleCDN.git"
+  },
+  "keywords": [
+    "CDN",
+    "Node.js"
+  ],
+  "author": "Gusev Andrey <count_rochester@mail.ru>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CountRochester/simpleCDN/issues"
+  },
+  "homepage": "https://github.com/CountRochester/simpleCDN#readme",
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.17.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "nodemon": "^2.0.7"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^8.5.1",
+    "pg": "^8.5.1",
+    "sequelize": "^6.3.5"
+  }
+}

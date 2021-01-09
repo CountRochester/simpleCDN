@@ -2,9 +2,10 @@
   "name": "simplecdn",
   "version": "1.0.0",
   "description": "Simple CDN service",
+  "type": "module",
   "main": "src/index.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon src/index.js --watch server"
+    "dev": "cross-env NODE_ENV=development nodemon src/index.js --watch src"
   },
   "repository": {
     "type": "git",

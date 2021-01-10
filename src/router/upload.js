@@ -47,11 +47,16 @@ function formFiles (keys, files) {
   return output
 }
 
-async function handleBuffer (buffer) {
+async function handleBuffer (data) {
   try {
-    const { keys, files } = extract(buffer)
+    const { keys, files } = extract(data.payload)
     const filesArr = formFiles(keys, files)
-    const writeFilePromises = filesArr.map(writeFile)
+    let filteredFiles = filesArr
+    if (!data.accessControl.hasPermission(1)) {
+      // eslint-disable-next-line max-len
+      filteredFiles = filesArr.filter(file => file.destinationPath.includes(uploadPath))
+    }
+    const writeFilePromises = filteredFiles.map(writeFile)
     await Promise.all(writeFilePromises)
   } catch (err) {
     console.log(err)
@@ -67,7 +72,7 @@ export default async (data) => {
     if (!data.payload.length) {
       throw new ServerError(400, 'Bad Request')
     }
-    await handleBuffer(data.payload)
+    await handleBuffer(data)
   } catch (err) {
     ServerError.throw(err)
   }

@@ -2,6 +2,7 @@ import http from 'http'
 
 import config from '../config/server.config.js'
 import router from './router/index.js'
+import { AuthControl } from './lib/access-control.js'
 
 const { PORT, HOSTNAME } = config
 const SYSTEM_LOG_COLOR = '\x1b[36m%s\x1b[0m'
@@ -22,12 +23,15 @@ function choseHandler (trimmedPath) {
     : router.notFound
 }
 
-const serverHandler = (req, res) => {
+const serverHandler = async (req, res) => {
   const parsedUrl = new URL(req.url, `http://${HOSTNAME}:${PORT}`)
   const trimmedPath = getTrimmedPath(parsedUrl)
   const method = req.method.toLowerCase()
   const contentLength = +req.headers['content-length']
 
+  const { token } = req.headers
+  const accessControl = new AuthControl(token)
+  await accessControl.init()
   console.log(trimmedPath)
 
   const data = {
@@ -35,7 +39,8 @@ const serverHandler = (req, res) => {
     queryStringObject: parsedUrl.query,
     method,
     headers: req.headers,
-    contentLength
+    contentLength,
+    accessControl
   }
 
   const chosenHandler = choseHandler(trimmedPath)

@@ -104,5 +104,11 @@ dist
 .tern-port
 
 config/dev.config.js
-public
+
+public/*
+!public/favicon.ico
+
+upload/*
+file-storage
+
 *.old

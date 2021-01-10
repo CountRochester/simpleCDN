@@ -29,6 +29,8 @@ const config = {
   ...base,
   STATIC_PATH: 'public',
   UPLOAD_PATH: 'upload',
+  FILE_STORAGE_PATH: 'file-storage',
+  STORAGE_ALIAS: 'storage',
   ALLOWED_MIME_TYPES: [
     'application/pdf',
     'application/zip',

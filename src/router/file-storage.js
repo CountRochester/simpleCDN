@@ -6,10 +6,10 @@ import { ServerError } from '../error.js'
 import config from '../../config/server.config.js'
 
 const rootDir = path.resolve('')
-const staticPath = path.join(rootDir, config.STATIC_PATH)
+const storagePath = path.join(rootDir, config.FILE_STORAGE_PATH)
 
 async function getStaticAsset (file) {
-  const filePath = path.join(staticPath, file)
+  const filePath = path.join(storagePath, file)
   const fileContent = await fs.promises.readFile(filePath)
   return fileContent
 }
@@ -19,7 +19,8 @@ export default async (data) => {
     if (data.method !== 'get') {
       throw new ServerError(405, 'Method Not Allowed')
     }
-    const trimmedAssetName = data.trimmedPath.replace(`${config.STATIC_PATH}/`, '')
+    const trimmedAssetName = data.trimmedPath
+      .replace(`${config.STORAGE_ALIAS}/`, '')
     if (!trimmedAssetName.length) {
       throw new ServerError(404, 'Not Found')
     }

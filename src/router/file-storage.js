@@ -19,6 +19,9 @@ export default async (data) => {
     if (data.method !== 'get') {
       throw new ServerError(405, 'Method Not Allowed')
     }
+    if (!data.accessControl.hasPermission(1)) {
+      throw new ServerError(403, 'Forbidden')
+    }
     const trimmedAssetName = data.trimmedPath
       .replace(`${config.STORAGE_ALIAS}/`, '')
     if (!trimmedAssetName.length) {

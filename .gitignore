@@ -105,3 +105,4 @@ dist
 
 config/dev.config.js
 public
+*.old

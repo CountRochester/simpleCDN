@@ -59,10 +59,11 @@ function getDividerFromBuffer (buffer) {
   return output
 }
 
-const writeFiles = (file) => {
+const writeFile = (file) => {
   if (!config.ALLOWED_MIME_TYPES.includes(file.contentType)) {
     throw new Error('Not allowed MIME type of file')
   }
+
   return fs.writeFile(
     path.join(staticPath, file.filename),
     file.value
@@ -70,7 +71,6 @@ const writeFiles = (file) => {
 }
 
 function getElementIndexes (buffer, divider) {
-  // const bufferDiv = Buffer.from(divider)
   const startIndexes = []
   let j = 0
   for (let i = 0; i < buffer.length; i++) {
@@ -83,13 +83,19 @@ function getElementIndexes (buffer, divider) {
     } else {
       j = 0
     }
+    if (i === divider.length && !startIndexes.length) {
+      startIndexes.push(0)
+    }
   }
-  const output = startIndexes.map((el, index) => ({
-    start: el,
-    end: startIndexes[index + 1]
+  const output = startIndexes.map((el, index) => {
+    const end = startIndexes[index + 1]
       ? startIndexes[index + 1] - divider.length - 3
       : buffer.length - divider.length - 5
-  }))
+    return {
+      start: el,
+      end
+    }
+  })
   return output
 }
 
@@ -119,7 +125,7 @@ function getMetaDataFromBuffer (bufferElement) {
   let end = false
   const metadata = []
   let i = 0
-  while (!end) {
+  while (!end && (i < bufferElement.length)) {
     metadata.push(getChar(bufferElement[i]))
     if (getChar(bufferElement[i]) === '\r'
       && getChar(bufferElement[i + 1]) === '\n'
@@ -132,7 +138,10 @@ function getMetaDataFromBuffer (bufferElement) {
     }
     i++
   }
-  return metadata.join('')
+  return {
+    metadata: metadata.join(''),
+    complete: end
+  }
 }
 
 function parseMetadata (metadata) {
@@ -159,18 +168,26 @@ function parseMetadata (metadata) {
   }
 }
 
+function getParsedElement (metadata, elData) {
+  const parsed = parseMetadata(metadata)
+  const content = elData.slice(metadata.length)
+  if (parsed.filename) {
+    parsed.value = content
+  } else {
+    parsed.value = content.toString()
+  }
+  return parsed
+}
+
+function formElement (elData) {
+  const { metadata } = getMetaDataFromBuffer(elData)
+  return getParsedElement(metadata, elData)
+}
+
 function formElements (data) {
   const elements = []
   data.forEach((el) => {
-    const metadata = getMetaDataFromBuffer(el)
-    const parsed = parseMetadata(metadata)
-    const content = el.slice(metadata.length)
-    if (parsed.filename) {
-      parsed.value = content
-    } else {
-      parsed.value = content.toString()
-    }
-    elements.push(parsed)
+    elements.push(formElement(el))
   })
   return elements
 }
@@ -178,6 +195,7 @@ function formElements (data) {
 const handleBuffer = async (buffer) => {
   try {
     const data = formData(buffer)
+
     const elements = formElements(data)
     const files = elements.filter(el => el.filename)
     const keys = elements.filter(el => !el.filename)
@@ -185,7 +203,7 @@ const handleBuffer = async (buffer) => {
     files.forEach((file) => {
       console.log(file.contentType)
     })
-    const writeFilePromises = files.map(writeFiles)
+    const writeFilePromises = files.map(writeFile)
     await Promise.all(writeFilePromises)
   } catch (err) {
     console.log(err)
@@ -201,8 +219,7 @@ export default async (data) => {
     if (!data.payload.length) {
       throw new ServerError(400, 'Bad Request')
     }
-    const promises = data.payload.map(handleBuffer)
-    await Promise.all(promises)
+    await handleBuffer(data.payload)
   } catch (err) {
     ServerError.throw(err)
   }

@@ -28,6 +28,7 @@ const base = isDevelopment
 const config = {
   ...base,
   STATIC_PATH: 'public',
+  UPLOAD_PATH: 'upload',
   ALLOWED_MIME_TYPES: [
     'application/pdf',
     'application/zip',

@@ -5,7 +5,8 @@
   "type": "module",
   "main": "src/index.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon src/index.js --watch src"
+    "dev": "cross-env NODE_ENV=development nodemon src/index.js --watch src",
+    "start": "node src/index.js"
   },
   "repository": {
     "type": "git",
